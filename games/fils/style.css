@@ -1,0 +1,329 @@
+/* === RESET & GLOBAL === */
+body {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* === GAME WRAPPER === */
+#game-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    /* Center LCD and box vertically */
+}
+
+/* === LCD SCREEN (EXTERNAL HACK TOOL) === */
+#lcd-screen {
+    position: absolute;
+    left: -220px;
+    top: 25px;
+    /* Stretched vertically */
+    width: 220px;
+    height: 450px;
+    background: #0a0a0a;
+    border: 5px solid #2a2a2a;
+    border-right: none;
+    border-radius: 15px 0 0 15px;
+    padding: 15px;
+    box-shadow: inset 0 0 20px #000, -10px 10px 20px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.lcd-display {
+    background: #051005;
+    border: 2px solid #222;
+    border-radius: 5px;
+    padding: 10px;
+    color: #0f0;
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 0 0 5px #0f0;
+    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* === DYNAMIC LCD CONSOLE === */
+.lcd-console {
+    flex-grow: 1;
+    background: #051005;
+    border: 2px solid #222;
+    border-radius: 5px;
+    padding: 10px;
+    color: #0a0;
+    font-size: 11px;
+    text-shadow: 0 0 3px #0a0;
+    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.console-line {
+    margin-bottom: 4px;
+    word-wrap: break-word;
+}
+
+.console-success {
+    color: #0f0;
+    text-shadow: 0 0 10px #0f0;
+    font-weight: bold;
+}
+
+.console-error {
+    color: #f00;
+    text-shadow: 0 0 10px #f00;
+    font-weight: bold;
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink 1s step-end infinite;
+}
+
+/* === GAME CONTAINER (BOX) === */
+#game-container {
+    position: relative;
+    width: 800px;
+    height: 500px;
+    background: transparent;
+    border: 8px solid #333;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 1);
+}
+
+/* === INTERNAL BACKGROUND (DEPTH) === */
+#internal-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0a0a0a;
+    border-radius: 7px;
+    /* Faux cables in the background for depth */
+    background-image:
+        linear-gradient(90deg, transparent 15%, rgba(40, 40, 40, 0.5) 15%, rgba(40, 40, 40, 0.5) 18%, transparent 18%),
+        linear-gradient(90deg, transparent 40%, rgba(25, 25, 25, 0.7) 40%, rgba(25, 25, 25, 0.7) 45%, transparent 45%),
+        linear-gradient(90deg, transparent 75%, rgba(35, 35, 35, 0.6) 75%, rgba(35, 35, 35, 0.6) 80%, transparent 80%),
+        linear-gradient(0deg, transparent 20%, rgba(15, 15, 15, 0.8) 20%, rgba(15, 15, 15, 0.8) 23%, transparent 23%);
+    box-shadow: inset 0 0 80px #000;
+    z-index: -3;
+    filter: blur(1px) contrast(1.2);
+}
+
+/* === WIRE NODES === */
+.node-column {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+/* Matching vertical placement */
+#left-nodes {
+    left: calc(100% + 8px);
+    /* Glued perfectly to the inner left border of the main box */
+    top: 70px;
+    bottom: 70px;
+}
+
+#right-nodes {
+    right: -4px;
+    /* Tucked inside the 8px border without bleeding outside */
+    top: 70px;
+    bottom: 70px;
+    z-index: -1;
+    /* Under container border, over SVG */
+}
+
+.node {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Source nodes (left) */
+.node.source {
+    border: 2px solid #111;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 0 5px 5px 0;
+    z-index: 7;
+}
+
+.node.source[data-color="red"] {
+    background: #ff3333;
+}
+
+.node.source[data-color="blue"] {
+    background: #3366ff;
+}
+
+.node.source[data-color="green"] {
+    background: #33ff33;
+}
+
+.node.source[data-color="yellow"] {
+    background: #ffff33;
+}
+
+/* Target nodes (right) */
+.node.target {
+    /* Make it look like a socket with a deep transparent hole */
+    background: rgba(0, 0, 0, 0.5);
+    border: 6px solid #333;
+    border-right: 2px solid #222;
+    border-radius: 5px 0 0 5px;
+    box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.9), -5px 0 10px rgba(0, 0, 0, 0.8);
+    cursor: default;
+}
+
+/* === SVG WIRES === */
+#wires-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+    overflow: hidden;
+    /* Prevent wires from bleeding over the border */
+}
+
+path.wire-line {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    filter: drop-shadow(0px 8px 5px rgba(0, 0, 0, 0.6));
+}
+
+/* === SCREW HOLES === */
+.screw-hole {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screw-hole::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: #050505;
+    border-radius: 50%;
+    box-shadow: inset 0 0 8px #000, 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.screw-hole.top-left {
+    top: 25px;
+    left: 25px;
+}
+
+.screw-hole.top-right {
+    top: 25px;
+    right: 25px;
+}
+
+.screw-hole.bottom-left {
+    bottom: 25px;
+    left: 25px;
+}
+
+.screw-hole.bottom-right {
+    bottom: 25px;
+    right: 25px;
+}
+
+/* === METAL PLATE === */
+#metal-plate {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: calc(100% + 16px);
+    height: calc(100% + 16px);
+    border-radius: 15px;
+    background-color: #2b2b2b;
+    background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.05) 10px, rgba(0, 0, 0, 0.05) 20px),
+        radial-gradient(circle at 50% 50%, #383838 0%, #202020 100%);
+    border: 2px solid #555;
+    box-shadow: inset 0 0 20px #000, 0 15px 40px rgba(0, 0, 0, 0.9);
+    z-index: 10;
+    transition: transform 1s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 1s;
+}
+
+#metal-plate.fallen {
+    transform: translateY(1200px) rotate(-5deg);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* SCREWS */
+.screw-container {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screw-container.top-left {
+    top: 25px;
+    left: 25px;
+}
+
+.screw-container.top-right {
+    top: 25px;
+    right: 25px;
+}
+
+.screw-container.bottom-left {
+    bottom: 25px;
+    left: 25px;
+}
+
+.screw-container.bottom-right {
+    bottom: 25px;
+    right: 25px;
+}
+
+/* The inner SVG will rotate during hold */
+.screw-svg {
+    transition: transform 0.05s linear;
+}
+
+.screw-container.fallen {
+    transform: translateY(600px) rotate(1000deg);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.8s ease-in, opacity 0.6s ease-in;
+}
+
+/* === SPARKS CANVAS === */
+#sparks-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}

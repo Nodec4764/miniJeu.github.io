@@ -46,13 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // If there's a next project, show the button
-            if (currentIndex !== -1 && currentIndex < projects.length - 1) {
+            // If a current project is found, always show the button and loop back to start if at the end
+            if (currentIndex !== -1) {
+                const nextIndex = (currentIndex + 1) % projects.length;
                 const nextBtn = document.createElement('button');
                 nextBtn.className = 'topbar-btn next-btn';
                 nextBtn.innerHTML = 'Suivant →';
                 nextBtn.onclick = () => {
-                    const nextUrlPart = projects[currentIndex + 1].url.replace('./', '');
+                    const nextUrlPart = projects[nextIndex].url.replace('./', '');
                     window.location.href = '../../' + nextUrlPart + '?fromHub=1';
                 };
                 topBar.appendChild(nextBtn);

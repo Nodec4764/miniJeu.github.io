@@ -31,5 +31,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         topBar.appendChild(copyBtn);
+
+        // Next Button (Top Right)
+        if (typeof projects !== 'undefined') {
+            const currentPath = window.location.pathname;
+            let currentIndex = -1;
+            
+            for (let i = 0; i < projects.length; i++) {
+                // Remove './' and check if current path includes it
+                const urlPart = projects[i].url.replace('./', '');
+                if (currentPath.includes(urlPart)) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            // If there's a next project, show the button
+            if (currentIndex !== -1 && currentIndex < projects.length - 1) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'topbar-btn next-btn';
+                nextBtn.innerHTML = 'Suivant →';
+                nextBtn.onclick = () => {
+                    const nextUrlPart = projects[currentIndex + 1].url.replace('./', '');
+                    window.location.href = '../../' + nextUrlPart + '?fromHub=1';
+                };
+                topBar.appendChild(nextBtn);
+            }
+        }
     }
 });

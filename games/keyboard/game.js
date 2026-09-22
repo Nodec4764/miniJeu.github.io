@@ -26,7 +26,7 @@ let state = {
     timerInterval: null
 };
 
-const ROUND_LENGTHS = [2, 4, 6, 8]; // Number of flashes per round
+const ROUND_LENGTHS = [3, 4, 5, 6]; // Number of flashes per round
 
 // Initialize Grids (4x4 = 16 cells)
 function initGrids() {
